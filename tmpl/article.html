@@ -1,0 +1,36 @@
+{{ define "content" }}
+	<div class="article" style="border: none; width: 95%; margin-left: auto; margin-right: auto">
+		<a href="{{.Link}}">
+			<div class="overline"></div>
+			<div style="width: 100%; text-align: center; word-wrap: break-spaces">
+				<p class="is-size-2 has-text-weight-bold">{{.Title}}</p>
+			</div>
+			<div class="underline"></div>
+			<p class="is-size-5 has-text-weight-bold">{{.Source.Name}} - {{.TS}}</p>
+		</a>
+		<div style="margin-top: 2rem;">
+			{{range .Content}}
+				<p style="font-size: 1.3rem;">{{.Value | safeHTML}}</p>
+				<div style="height: 20px"></div>
+			{{end}}
+		</div>
+	</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var sourceID = {{.Source.ID}};
+    var disableImgProxy = {{.Source.DisableImgProxy}};
+    var images = document.querySelectorAll('img');
+    images.forEach(function(img) {
+        img.setAttribute('referrerpolicy', 'no-referrer');
+        var realSrc = img.getAttribute('data-original') || img.getAttribute('data-src') || img.getAttribute('src');
+        if (realSrc && realSrc.indexOf('/img?url=') === -1 && realSrc.indexOf('data:') !== 0) {
+            if (!disableImgProxy) {
+                img.src = '/img?url=' + encodeURIComponent(realSrc) + '&src=' + sourceID;
+            }
+            if (img.hasAttribute('data-original')) img.removeAttribute('data-original');
+            if (img.hasAttribute('data-src')) img.removeAttribute('data-src');
+        }
+    });
+});
+</script>
+{{ end }}

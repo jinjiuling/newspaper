@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章管理</title>
+    <link rel="stylesheet" href="/static/bulma.min.css">
+    <style>
+        body { background-color: #f5f5f5; }
+        .article-title { max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pagination { margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar is-link" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/admin/">📰 RSS Reader</a>
+            <a role="button" class="navbar-burger" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
+                <span></span><span></span><span></span>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/admin/">仪表盘</a>
+                <a class="navbar-item" href="/admin/sources">RSS 源管理</a>
+                <a class="navbar-item is-active" href="/admin/articles">文章管理</a>
+                <a class="navbar-item" href="/">查看前台</a>
+            </div>
+            <div class="navbar-end">
+                <a class="navbar-item" href="/admin/logout">退出</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="title">文章管理</h1>
+            <p class="subtitle">共 {{.Total}} 篇文章</p>
+
+            <!-- Filter -->
+            <div class="box">
+                <form method="GET" action="/admin/articles" class="field is-grouped">
+                    <div class="control is-expanded">
+                        <div class="select is-fullwidth">
+                            <select name="source" onchange="this.form.submit()">
+                                <option value="">全部来源</option>
+                                {{range .SourceNames}}
+                                <option value="{{.}}" {{if eq $.SourceFilter .}}selected{{end}}>{{.}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <button class="button is-link" type="submit">筛选</button>
+                    </div>
+                    {{if .SourceFilter}}
+                    <div class="control">
+                        <a class="button is-light" href="/admin/articles">清除筛选</a>
+                    </div>
+                    {{end}}
+                </form>
+
+                {{if .SourceFilter}}
+                <form method="POST" action="/admin/articles/delete-source" style="margin-top: 0.75rem;" onsubmit="return confirm('确定删除 {{.SourceFilter}} 的所有文章吗？此操作不可撤销！')">
+                    <input type="hidden" name="source_name" value="{{.SourceFilter}}">
+                    <button class="button is-danger" type="submit">🗑 删除该源全部文章</button>
+                </form>
+                {{end}}
+            </div>
+
+            <!-- Article List -->
+            <div class="box">
+                <table class="table is-fullwidth is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>标题</th>
+                            <th>来源</th>
+                            <th>时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Articles}}
+                        <tr>
+                            <td class="article-title">
+                                <a href="/article?id={{.ID}}" target="_blank">{{.Title}}</a>
+                            </td>
+                            <td><span class="tag is-info is-light">{{.Source.Name}}</span></td>
+                            <td>{{.TS}}</td>
+                            <td>
+                                <form method="POST" action="/admin/articles/delete" style="display:inline;" onsubmit="return confirm('确定删除？')">
+                                    <input type="hidden" name="id" value="{{.ID}}">
+                                    <input type="hidden" name="redirect" value="/admin/articles?page={{$.CurrentPage}}{{if $.SourceFilter}}&source={{$.SourceFilter}}{{end}}">
+                                    <button class="button is-danger is-small" type="submit">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                {{if gt .TotalPages 1}}
+                <nav class="pagination is-centered" role="navigation">
+                    {{if gt .CurrentPage 1}}
+                    <a class="pagination-previous" href="/admin/articles?page={{minus .CurrentPage 1}}{{if .SourceFilter}}&source={{.SourceFilter}}{{end}}">上一页</a>
+                    {{end}}
+                    {{if lt .CurrentPage .TotalPages}}
+                    <a class="pagination-next" href="/admin/articles?page={{plus .CurrentPage 1}}{{if .SourceFilter}}&source={{.SourceFilter}}{{end}}">下一页</a>
+                    {{end}}
+                    <ul class="pagination-list">
+                        <li><span class="pagination-link is-current">第 {{.CurrentPage}} / {{.TotalPages}} 页</span></li>
+                    </ul>
+                </nav>
+                {{end}}
+            </div>
+        </div>
+    </section>
+</body>
+</html>

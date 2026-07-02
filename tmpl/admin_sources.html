@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSS 源管理</title>
+    <link rel="stylesheet" href="/static/bulma.min.css">
+    <style>body { background-color: #f5f5f5; }</style>
+</head>
+<body>
+    <nav class="navbar is-link" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/admin/">📰 RSS Reader</a>
+            <a role="button" class="navbar-burger" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
+                <span></span><span></span><span></span>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/admin/">仪表盘</a>
+                <a class="navbar-item is-active" href="/admin/sources">RSS 源管理</a>
+                <a class="navbar-item" href="/admin/articles">文章管理</a>
+                <a class="navbar-item" href="/">查看前台</a>
+            </div>
+            <div class="navbar-end">
+                <a class="navbar-item" href="/admin/logout">退出</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="level">
+                <div class="level-left">
+                    <h1 class="title">RSS 源管理</h1>
+                </div>
+                <div class="level-right">
+                    <a class="button is-success" href="/admin/sources/add">➕ 添加新源</a>
+                </div>
+            </div>
+
+            <div class="box">
+                <table class="table is-fullwidth is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>网站 URL</th>
+                            <th>Feed URL</th>
+                            <th>分类</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .}}
+                        <tr>
+                            <td>{{.ID}}</td>
+                            <td><strong>{{.Name}}</strong></td>
+                            <td><a href="{{.URL}}" target="_blank">{{.URL}}</a></td>
+                            <td><code style="font-size: 0.8rem;">{{.FeedURL}}</code></td>
+                            <td>
+                                {{range .Categories}}
+                                <span class="tag is-info is-light">{{.}}</span>
+                                {{end}}
+                            </td>
+                            <td>
+                                {{if .Enabled}}
+                                <span class="tag is-success">启用</span>
+                                {{else}}
+                                <span class="tag is-warning">禁用</span>
+                                {{end}}
+                            </td>
+                            <td>
+                                <div class="buttons are-small">
+                                    <a class="button is-link is-light" href="/admin/sources/edit?id={{.ID}}">编辑</a>
+                                    <form method="POST" action="/admin/sources/toggle" style="display:inline;">
+                                        <input type="hidden" name="id" value="{{.ID}}">
+                                        {{if .Enabled}}
+                                        <button class="button is-warning is-light" type="submit">禁用</button>
+                                        {{else}}
+                                        <button class="button is-success is-light" type="submit">启用</button>
+                                        {{end}}
+                                    </form>
+                                    <form method="POST" action="/admin/sources/delete" style="display:inline;" onsubmit="return confirm('确定删除源 {{.Name}} 吗？这不会删除已抓取的文章。')">
+                                        <input type="hidden" name="id" value="{{.ID}}">
+                                        <button class="button is-danger is-light" type="submit">删除</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

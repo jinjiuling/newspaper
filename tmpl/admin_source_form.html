@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{if eq .Action "add"}}添加 RSS 源{{else}}编辑 RSS 源{{end}}</title>
+    <link rel="stylesheet" href="/static/bulma.min.css">
+    <style>body { background-color: #f5f5f5; }</style>
+</head>
+<body>
+    <nav class="navbar is-link" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/admin/">📰 RSS Reader</a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/admin/">仪表盘</a>
+                <a class="navbar-item is-active" href="/admin/sources">RSS 源管理</a>
+                <a class="navbar-item" href="/admin/articles">文章管理</a>
+            </div>
+            <div class="navbar-end">
+                <a class="navbar-item" href="/admin/logout">退出</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="title">{{if eq .Action "add"}}添加 RSS 源{{else}}编辑 RSS 源{{end}}</h1>
+
+            {{if .Error}}
+            <div class="notification is-danger">{{.Error}}</div>
+            {{end}}
+
+            <div class="box">
+                <form method="POST" action="{{if eq .Action "add"}}/admin/sources/add{{else}}/admin/sources/edit{{end}}">
+                    {{if eq .Action "edit"}}
+                    <input type="hidden" name="id" value="{{.Source.ID}}">
+                    {{end}}
+
+                    <div class="field">
+                        <label class="label">名称</label>
+                        <div class="control">
+                            <input class="input" type="text" name="name" value="{{if .Source}}{{.Source.Name}}{{end}}" placeholder="例如：澎湃新闻" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">网站 URL</label>
+                        <div class="control">
+                            <input class="input" type="url" name="url" value="{{if .Source}}{{.Source.URL}}{{end}}" placeholder="https://www.thepaper.cn" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Feed URL (RSS)</label>
+                        <div class="control">
+                            <input class="input" type="url" name="feed_url" value="{{if .Source}}{{.Source.FeedURL}}{{end}}" placeholder="RSS 订阅地址" required>
+                        </div>
+                        <p class="help">如果原站没有 RSS，可以使用 <a href="https://docs.rsshub.app" target="_blank">RSSHub</a> 生成</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">分类</label>
+                        <div class="control">
+                            <input class="input" type="text" name="category" value="{{if .Source}}{{index .Source.Categories 0}}{{end}}" placeholder="例如：新闻、科技、游戏">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">图片请求头 (JSON)</label>
+                        <div class="control">
+                            <textarea class="textarea" name="image_headers" placeholder='{"Referer": "https://example.com/"}'>{{if .Source}}{{if .Source.ImageHeaders}}{{range $k, $v := .Source.ImageHeaders}}"{{$k}}": "{{$v}}"{{end}}{{end}}{{end}}</textarea>
+                        </div>
+                        <p class="help">留空则自动使用源 URL 作为 Referer。格式: JSON 对象，如 {"Referer": "https://xxx.com", "User-Agent": "Mozilla/5.0"}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input type="checkbox" name="enabled" {{if or (not .Source) .Source.Enabled}}checked{{end}}>
+                            启用
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox">
+                            <input type="checkbox" name="disable_img_proxy" {{if and .Source .Source.DisableImgProxy}}checked{{end}}>
+                            禁用图片代理（直连源站图片，不经过本服务中转）
+                        </label>
+                        <p class="help">勾选后该源的图片将直接从源站加载，不经过本服务代理。适用于源站允许跨域引用图片的场景。</p>
+                    </div>
+
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button class="button is-link" type="submit">保存</button>
+                        </div>
+                        <div class="control">
+                            <a class="button is-light" href="/admin/sources">取消</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

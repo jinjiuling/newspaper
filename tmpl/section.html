@@ -1,0 +1,176 @@
+{{ define "section-1"}}
+    <div class="tile is-gapless">
+        <div class="tile is-child is-8 h1200">
+            {{template "biggest-article" (index .Articles 0) }}
+        </div>
+        <div class="tile is-4 is-vertical">
+            <div class="tile">
+                <div class="tile is-child is-6 h300">
+                    {{template "small-article" (index .Articles 1) }}
+                </div>
+                <div class="tile is-child is-6 h300">
+                    {{template "small-article" (index .Articles 2) }}
+                </div>
+            </div>
+            <div class="tile">
+                <div class="tile is-child is-12" style="max-height: 900px">
+                    {{template "medium-article" (index .Articles 3) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{ define "section-2" }}
+    <div class="tile is-gapless">
+        <div class="tile is-child is-4 h750">
+            {{template "medium-article" (index .Articles 0) }}
+        </div>
+        <div class="tile is-child is-4 h750">
+            {{template "medium-article" (index .Articles 1) }}
+        </div>
+        <div class="tile is-4 is-vertical">
+            <div class="tile">
+                <div class="tile is-6 h250">
+                    {{template "small-article" (index .Articles 2) }}
+                </div>
+                <div class="tile is-6 h250">
+                    {{template "small-article" (index .Articles 3) }}
+                </div>
+            </div>
+            <div class="tile">
+                <div class="tile is-6 h250">
+                    {{template "small-article" (index .Articles 4) }}
+                </div>
+                <div class="tile is-6 h250">
+                    {{template "small-article" (index .Articles 5) }}
+                </div>
+            </div>
+            <div class="tile">
+                <div class="tile is-6 h250">
+                    {{template "small-article" (index .Articles 6) }}
+                </div>
+                <div class="tile is-6 h250">
+                    {{template "small-article" (index .Articles 7) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "section-3"}}
+<div class="tile is-gapless">
+    <div class="tile is-child is-3 h600">
+        {{template "article" (index .Articles 0) }}
+    </div>
+    <div class="tile is-child is-3 h600">
+        {{template "article" (index .Articles 1) }}
+    </div>
+    <div class="tile is-child is-3 h600">
+        {{template "article" (index .Articles 2) }}
+    </div>
+    <div class="tile is-child is-3 h600">
+        {{template "article" (index .Articles 3) }}
+    </div>
+</div>
+{{end}}
+
+{{define "section-4"}}
+<div class="tile is-gapless">
+    <div class="tile is-4 is-vertical">
+        <div class="tile">
+            <div class="tile is-child is-6 h400">
+                {{template "small-article" (index .Articles 0) }}
+            </div>
+            <div class="tile is-child is-6 h400">
+                {{template "small-article" (index .Articles 1) }}
+            </div>
+        </div>
+        <div class="tile">
+            <div class="tile is-child is-12 h600">
+                {{template "article" (index .Articles 2) }}
+            </div>
+        </div>
+    </div>
+    <div class="tile is-child is-6 h1000" >
+        {{template "big-article" (index .Articles 3) }}
+    </div>
+    <div class="tile is-child is-2 h1000">
+        {{template "small-article" (index .Articles 4) }}
+    </div>
+</div>
+{{end}}
+
+{{define "section-5"}}
+<div class="tile is-gapless">
+    <div class="tile is-child is-4 h600">
+        {{template "article" (index .Articles 0) }}
+    </div>
+    <div class="tile is-child is-4 h600">
+        {{template "article" (index .Articles 1) }}
+    </div>
+    <div class="tile is-child is-4 h600">
+        {{template "article" (index .Articles 2) }}
+    </div>
+</div>
+{{end}}
+
+{{define "section-6"}}
+<div class="tile is-gapless">
+    <div class="tile is-child is-2 h400">
+        {{template "small-article" (index .Articles 0) }}
+    </div>
+    <div class="tile is-child is-2 h400">
+        {{template "small-article" (index .Articles 1) }}
+    </div>
+    <div class="tile is-child is-2 h400">
+        {{template "small-article" (index .Articles 2) }}
+    </div>
+    <div class="tile is-child is-2 h400">
+        {{template "small-article" (index .Articles 3) }}
+    </div>
+    <div class="tile is-child is-2 h400">
+        {{template "small-article" (index .Articles 4) }}
+    </div>
+    <div class="tile is-child is-2 h400">
+        {{template "small-article" (index .Articles 5) }}
+    </div>
+</div>
+{{end}}
+
+{{define "section-7"}}
+<div class="tile is-gapless">
+    <div class="tile is-child is-6 h800">
+        {{template "big-article" (index .Articles 0) }}
+    </div>
+    <div class="tile is-child is-6 h800">
+        {{template "big-article" (index .Articles 1) }}
+    </div>
+</div>
+{{end}}
+
+{{define "section-8"}}
+<div class="tile is-gapless">
+    <div class="tile is-4 is-vertical">
+        <div class="tile">
+            <div class="tile is-child is-6 h300">
+                {{template "small-article" (index .Articles 0) }}
+            </div>
+            <div class="tile is-child is-6 h300">
+                {{template "small-article" (index .Articles 1) }}
+            </div>
+        </div>
+        <div class="tile">
+            <div class="tile is-child is-12 h700">
+                {{template "article" (index .Articles 2) }}
+            </div>
+        </div>
+    </div>
+    <div class="tile is-child is-6 h1000">
+        {{template "big-article" (index .Articles 3) }}
+    </div>
+    <div class="tile is-child is-2 h1000">
+        {{template "small-article" (index .Articles 4) }}
+    </div>
+</div>
+{{end}}

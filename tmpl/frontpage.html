@@ -1,0 +1,103 @@
+{{ define "content" }}
+<div class="tile is-ancestor" style="margin-left: 0;margin-right: 0">
+    <div class="tile is-vertical is-gapless">
+        {{range .Sections}}
+            {{if eq .Name "section-1"}}{{ template "section-1" . }}{{end}}
+            {{if eq .Name "section-2"}}{{ template "section-2" . }}{{end}}
+            {{if eq .Name "section-3"}}{{ template "section-3" . }}{{end}}
+            {{if eq .Name "section-4"}}{{ template "section-4" . }}{{end}}
+            {{if eq .Name "section-5"}}{{ template "section-5" . }}{{end}}
+            {{if eq .Name "section-6"}}{{ template "section-6" . }}{{end}}
+            {{if eq .Name "section-7"}}{{ template "section-7" . }}{{end}}
+            {{if eq .Name "section-8"}}{{ template "section-8" . }}{{end}}
+        {{end}}
+    </div>
+</div>
+<script>
+// 控制台测试版本 v14：超高图片限制最大高度，不是缩放
+
+function debounce(fn, delay = 100) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            try { fn.apply(this, args); } catch (err) { console.error(err); }
+        }, delay);
+    };
+}
+
+document.querySelectorAll('.article').forEach(function(el) {
+    const aid = el.id;
+    if (el.dataset.trim !== '1') return;
+
+    const refresh = debounce(() => trimArticle(aid), 100);
+    requestAnimationFrame(() => { refresh(); });
+
+    // 从 CSS 获取容器高度
+    const style = getComputedStyle(el);
+    const maxH = parseFloat(style.maxHeight);
+    const containerHeight = (maxH > 0) ? maxH : el.clientHeight;
+
+    // 计算标题区域高度
+    const linkDiv = el.querySelector('[id$="-link"]');
+    if (!linkDiv) return;
+    const a = linkDiv.querySelector('a');
+    if (!a) return;
+    let titleH = 0;
+    for (let i = 0; i < a.children.length; i++) {
+        if (a.children[i].tagName === 'IMG') continue;
+        titleH += a.children[i].offsetHeight;
+    }
+    const sourceLink = linkDiv.querySelector('a[href^="/?src="]');
+    if (sourceLink) titleH += sourceLink.offsetHeight;
+    titleH += 62;
+
+    // 高度阈值和最大图片高度
+    const heightThreshold = containerHeight - titleH;
+    const maxImgH = heightThreshold;
+
+    console.log('[' + aid + '] 容器:', containerHeight, '标题:', titleH, '阈值:', heightThreshold);
+
+    const imgs = el.querySelectorAll(':scope img');
+    imgs.forEach(function(img) {
+        if (img.dataset.resized === '1') return;
+        if (img.dataset.loadBind) return;
+        img.dataset.loadBind = '1';
+
+        function handleImage() {
+            requestAnimationFrame(() => {
+                const naturalH = img.naturalHeight;
+
+                if (!naturalH) {
+                    console.log('[' + aid + '] naturalH=0，跳过');
+                    refresh();
+                    return;
+                }
+
+                console.log('[' + aid + '] naturalH:', naturalH, '阈值:', heightThreshold);
+
+                // 保留原始判断逻辑：超高才处理
+                if (naturalH > heightThreshold) {
+                    console.log('[' + aid + '] 超高，限制 max-height:', maxImgH);
+                    // 用 style 标签限制最大高度
+                    const css = '#' + aid + ' img[data-resized="1"]{max-height:' + maxImgH + 'px!important;width:100%!important;object-fit:cover!important;}';
+                    const tag = document.createElement('style');
+                    tag.textContent = css;
+                    document.head.appendChild(tag);
+                    img.dataset.resized = '1';
+                } else {
+                    console.log('[' + aid + '] 正常，不管');
+                }
+                refresh();
+            });
+        }
+
+        img.addEventListener('load', handleImage);
+        if (img.complete) handleImage();
+    });
+});
+
+console.log('=== 测试完成 v14 ===');
+
+</script>
+{{ end }}

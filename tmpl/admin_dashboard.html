@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台</title>
+    <link rel="stylesheet" href="/static/bulma.min.css">
+    <style>
+        body { background-color: #f5f5f5; }
+        .navbar-brand .navbar-item { font-weight: bold; font-size: 1.2rem; }
+        .stat-card { text-align: center; padding: 1.5rem; }
+        .stat-card .title { font-size: 2.5rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar is-link" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/admin/">📰 RSS Reader</a>
+            <a role="button" class="navbar-burger" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
+                <span></span><span></span><span></span>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/admin/">仪表盘</a>
+                <a class="navbar-item" href="/admin/sources">RSS 源管理</a>
+                <a class="navbar-item" href="/admin/articles">文章管理</a>
+                <a class="navbar-item" href="/">查看前台</a>
+            </div>
+            <div class="navbar-end">
+                <a class="navbar-item" href="/admin/logout">退出</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="title">仪表盘</h1>
+            <p class="subtitle">当前时间：{{.CurrentTime}}</p>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="box stat-card">
+                        <p class="heading">RSS 源数量</p>
+                        <p class="title">{{len .Sources}}</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box stat-card">
+                        <p class="heading">文章总数</p>
+                        <p class="title">{{.ArticleCount}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <h2 class="subtitle">快速操作</h2>
+                <div class="buttons">
+                    <form method="POST" action="/admin/poll" style="display: inline;">
+                        <button class="button is-link" type="submit">🔄 立即抓取 RSS</button>
+                    </form>
+                    <a class="button is-success" href="/admin/sources/add">➕ 添加 RSS 源</a>
+                </div>
+            </div>
+
+            <div class="box">
+                <h2 class="subtitle">已订阅的 RSS 源</h2>
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>Feed URL</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Sources}}
+                        <tr>
+                            <td>{{.Name}}</td>
+                            <td><code>{{.FeedURL}}</code></td>
+                            <td>
+                                {{if .Enabled}}
+                                <span class="tag is-success">启用</span>
+                                {{else}}
+                                <span class="tag is-warning">禁用</span>
+                                {{end}}
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
